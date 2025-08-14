@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "./urdu.css";
+
+body {
+  @apply bg-gray-50 text-gray-800;
+}
+
+.urdu-receipt {
+  @apply urdu-text rtl-layout;
+  font-size: 1.2rem;
+}

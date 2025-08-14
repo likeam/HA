@@ -1,0 +1,16 @@
+@font-face {
+  font-family: "Noto Nastaliq Urdu";
+  src: url("../assets/fonts/NotoNastaliqUrdu-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-urdu {
+  font-family: "Noto Nastaliq Urdu", serif;
+}
+
+.urdu-text {
+  direction: rtl;
+  text-align: right;
+  font-family: "Noto Nastaliq Urdu", serif;
+}

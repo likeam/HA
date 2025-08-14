@@ -1,42 +1,52 @@
 import Product from "../models/Product.js";
+import Category from "../models/Category.js";
 import Subcategory from "../models/Subcategory.js";
 
-// Create product with offline support
 export const createProduct = async (req, res) => {
   try {
-    const { name, price, stock, barcode, subcategory } = req.body;
+    const { category, subcategory } = req.body;
 
-    // Verify subcategory exists
-    const validSubcategory = await Subcategory.findById(subcategory);
-    if (!validSubcategory) {
-      return res.status(400).json({ error: "Invalid subcategory" });
+    // Verify category exists
+    const categoryExists = await Category.findById(category);
+    if (!categoryExists) {
+      return res.status(400).json({ error: "Invalid category ID" });
     }
 
-    const product = await Product.create({
-      name,
-      price,
-      stock,
-      barcode,
-      subcategory,
+    // Verify subcategory exists and belongs to category
+    const subcategoryExists = await Subcategory.findOne({
+      _id: subcategory,
+      category,
     });
+    if (!subcategoryExists) {
+      return res
+        .status(400)
+        .json({ error: "Invalid subcategory for category" });
+    }
 
+    const product = new Product(req.body);
+    await product.save();
     res.status(201).json(product);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-// Get products with pagination
 export const getProducts = async (req, res) => {
   try {
-    const { page = 1, limit = 20, subcategory } = req.query;
+    const { category, subcategory, search } = req.query;
+    const filter = {};
 
-    const query = {};
-    if (subcategory) query.subcategory = subcategory;
+    if (category) filter.category = category;
+    if (subcategory) filter.subcategory = subcategory;
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { barcode: search },
+      ];
+    }
 
-    const products = await Product.find(query)
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
+    const products = await Product.find(filter)
+      .populate("category")
       .populate("subcategory");
 
     res.json(products);
@@ -45,28 +55,41 @@ export const getProducts = async (req, res) => {
   }
 };
 
-// Offline product update handler
-export const offlineUpdate = async (req, res) => {
+export const updateProduct = async (req, res) => {
   try {
-    // Contains array of pending operations
-    const { operations } = req.body;
+    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!product) return res.status(404).json({ error: "Product not found" });
+    res.json(product);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
-    // Process each operation
-    const results = await Promise.all(
-      operations.map(async (op) => {
-        if (op.type === "create") {
-          return Product.create(op.data);
-        }
-        if (op.type === "update") {
-          return Product.findByIdAndUpdate(op.id, op.data, { new: true });
-        }
-        if (op.type === "delete") {
-          return Product.findByIdAndDelete(op.id);
-        }
-      })
-    );
+export const deleteProduct = async (req, res) => {
+  try {
+    const product = await Product.findByIdAndDelete(req.params.id);
+    if (!product) return res.status(404).json({ error: "Product not found" });
+    res.json({ message: "Product deleted" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-    res.json({ success: true, results });
+export const bulkUpdateStock = async (req, res) => {
+  try {
+    const { updates } = req.body;
+    const operations = updates.map((update) => ({
+      updateOne: {
+        filter: { _id: update.productId },
+        update: { $inc: { stock: update.quantity } },
+      },
+    }));
+
+    await Product.bulkWrite(operations);
+    res.json({ message: "Stock updated successfully" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
