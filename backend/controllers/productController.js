@@ -1,96 +1,95 @@
 import Product from "../models/Product.js";
-import Category from "../models/Category.js";
 import Subcategory from "../models/Subcategory.js";
 
+// Create new product
 export const createProduct = async (req, res) => {
   try {
-    const { category, subcategory } = req.body;
+    const { urduName, englishName, price, byWeight, subcategory } = req.body;
 
-    // Verify category exists
-    const categoryExists = await Category.findById(category);
-    if (!categoryExists) {
-      return res.status(400).json({ error: "Invalid category ID" });
-    }
-
-    // Verify subcategory exists and belongs to category
-    const subcategoryExists = await Subcategory.findOne({
-      _id: subcategory,
-      category,
-    });
+    // Verify subcategory exists
+    const subcategoryExists = await Subcategory.findById(subcategory);
     if (!subcategoryExists) {
-      return res
-        .status(400)
-        .json({ error: "Invalid subcategory for category" });
+      return res.status(404).json({ message: "Subcategory not found" });
     }
 
-    const product = new Product(req.body);
-    await product.save();
-    res.status(201).json(product);
+    const newProduct = new Product({
+      urduName,
+      englishName,
+      price,
+      byWeight,
+      subcategory,
+    });
+
+    const savedProduct = await newProduct.save();
+    res.status(201).json(savedProduct);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
+// Get all products
 export const getProducts = async (req, res) => {
   try {
-    const { category, subcategory, search } = req.query;
-    const filter = {};
+    const { subcategory, category, search } = req.query;
+    let query = {};
 
-    if (category) filter.category = category;
-    if (subcategory) filter.subcategory = subcategory;
+    if (subcategory) {
+      query.subcategory = subcategory;
+    } else if (category) {
+      const subcategories = await Subcategory.find({ category });
+      query.subcategory = { $in: subcategories.map((s) => s._id) };
+    }
+
     if (search) {
-      filter.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { barcode: search },
+      query.$or = [
+        { urduName: { $regex: search, $options: "i" } },
+        { englishName: { $regex: search, $options: "i" } },
       ];
     }
 
-    const products = await Product.find(filter)
-      .populate("category")
-      .populate("subcategory");
+    const products = await Product.find(query)
+      .populate({
+        path: "subcategory",
+        populate: {
+          path: "category",
+          select: "urduName",
+        },
+      })
+      .sort({ createdAt: -1 });
 
     res.json(products);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
+// Update product
 export const updateProduct = async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    const { id } = req.params;
+    const updatedProduct = await Product.findByIdAndUpdate(id, req.body, {
       new: true,
-      runValidators: true,
+    }).populate({
+      path: "subcategory",
+      populate: {
+        path: "category",
+        select: "urduName",
+      },
     });
-    if (!product) return res.status(404).json({ error: "Product not found" });
-    res.json(product);
+
+    res.json(updatedProduct);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
+// Delete product
 export const deleteProduct = async (req, res) => {
   try {
-    const product = await Product.findByIdAndDelete(req.params.id);
-    if (!product) return res.status(404).json({ error: "Product not found" });
-    res.json({ message: "Product deleted" });
+    const { id } = req.params;
+    await Product.findByIdAndDelete(id);
+    res.json({ message: "Product deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-export const bulkUpdateStock = async (req, res) => {
-  try {
-    const { updates } = req.body;
-    const operations = updates.map((update) => ({
-      updateOne: {
-        filter: { _id: update.productId },
-        update: { $inc: { stock: update.quantity } },
-      },
-    }));
-
-    await Product.bulkWrite(operations);
-    res.json({ message: "Stock updated successfully" });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 };

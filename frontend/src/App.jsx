@@ -1,58 +1,39 @@
+// src/App.jsx
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Provider } from "react-redux";
-import { store } from "./app/store";
-import { useNetworkStatus } from "./hooks/useNetworkStatus";
-import { initSync } from "./services/syncService";
-import Navbar from "./components/layout/Navbar";
-import Sidebar from "./components/layout/Sidebar";
-import Dashboard from "./pages/Dashboard";
-import Inventory from "./pages/Inventory";
-import POS from "./pages/POS";
-import Sales from "./pages/Sales";
-import Settings from "./pages/Settings";
-import OfflineProvider from "./contexts/OfflineContext";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
+import POSPage from "./pages/POSPage";
+import InventoryPage from "./pages/InventoryPage";
+import BillsPage from "./pages/BillsPage";
+import SyncPage from "./pages/SyncPage";
+import SettingsPage from "./pages/SettingsPage";
+import DashboardPage from "./pages/DashboardPage";
+import OfflineStatus from "./components/OfflineStatus";
+import "./styles/main.css";
 
-const AppWrapper = () => {
-  // Initialize network status monitoring
-  useNetworkStatus();
-
-  // Initialize data sync
-  React.useEffect(() => {
-    initSync();
-  }, []);
-
+function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <div className="flex h-screen bg-gray-100">
         <Sidebar />
 
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <Navbar />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <OfflineStatus />
 
-          <main className="flex-1 overflow-y-auto p-4 bg-gray-50">
+          <main className="flex-1 overflow-y-auto p-4 lg:p-6">
             <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/inventory" element={<Inventory />} />
-              <Route path="/pos" element={<POS />} />
-              <Route path="/sales" element={<Sales />} />
-              <Route path="/settings" element={<Settings />} />
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/pos" element={<POSPage />} />
+              <Route path="/inventory" element={<InventoryPage />} />
+              <Route path="/bills" element={<BillsPage />} />
+              <Route path="/sync" element={<SyncPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
             </Routes>
           </main>
         </div>
       </div>
-    </Router>
+    </BrowserRouter>
   );
-};
-
-const App = () => {
-  return (
-    <Provider store={store}>
-      <OfflineProvider>
-        <AppWrapper />
-      </OfflineProvider>
-    </Provider>
-  );
-};
+}
 
 export default App;

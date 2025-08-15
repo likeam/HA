@@ -1,60 +1,41 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import {
-  FaShoppingCart,
-  FaBox,
-  FaChartBar,
-  FaCog,
-  FaSignOutAlt,
-} from "react-icons/fa";
-import SyncStatus from "../common/SyncStatus";
+import { NavLink } from "react-router-dom";
+import { translateLabel } from "../utils/urduUtils";
 
 const Navbar = () => {
+  const navItems = [
+    { path: "/", label: "POS" },
+    { path: "/inventory", label: "CATEGORIES" },
+    { path: "/bills", label: "BILLS" },
+    { path: "/sync", label: "SYNC" },
+  ];
+
   return (
-    <nav className="bg-gray-800 text-white shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <Link to="/" className="text-xl font-bold">
-                انوینٹری مینیجمنٹ
-              </Link>
-            </div>
-            <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline space-x-4">
-                <Link
-                  to="/pos"
-                  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 flex items-center"
-                >
-                  <FaShoppingCart className="mr-1" /> POS
-                </Link>
-                <Link
-                  to="/inventory"
-                  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 flex items-center"
-                >
-                  <FaBox className="mr-1" /> انوینٹری
-                </Link>
-                <Link
-                  to="/sales"
-                  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 flex items-center"
-                >
-                  <FaChartBar className="mr-1" /> فروخت
-                </Link>
-                <Link
-                  to="/settings"
-                  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 flex items-center"
-                >
-                  <FaCog className="mr-1" /> ترتیبات
-                </Link>
-              </div>
-            </div>
+    <nav className="bg-amber-700 text-white shadow-lg">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center py-3">
+          <div className="font-urdu text-xl font-bold">
+            {translateLabel("INVENTORY_SYSTEM")}
           </div>
-          <div className="flex items-center">
-            <SyncStatus />
-            <button className="ml-4 p-1 rounded-full text-gray-400 hover:text-white">
-              <FaSignOutAlt className="h-6 w-6" />
-            </button>
-          </div>
+
+          <ul className="flex space-x-6">
+            {navItems.map((item) => (
+              <li key={item.path}>
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `py-2 px-3 rounded-md transition-colors ${
+                      isActive ? "bg-amber-800" : "hover:bg-amber-600"
+                    }`
+                  }
+                >
+                  <span className="font-urdu">
+                    {translateLabel(item.label)}
+                  </span>
+                </NavLink>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </nav>

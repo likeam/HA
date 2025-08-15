@@ -1,16 +1,18 @@
 import React from "react";
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-
-import "./styles/tailwind.css";
-import "./styles/urdu.css";
+import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
 import App from "./App";
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import "./styles/main.css";
+import "./styles/rtl.css";
+import "./styles/print.css";
+import store from "./app/store";
+import { registerServiceWorker } from "./serviceWorker";
 
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <Provider store={store}>
     <App />
-  </StrictMode>
+  </Provider>
 );
 
-serviceWorkerRegistration.register();
+// Register service worker
+registerServiceWorker();

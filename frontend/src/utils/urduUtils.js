@@ -1,17 +1,27 @@
-// Utility functions for Urdu text manipulation
-export const formatUrduNumber = (number) => {
+export const formatUrduNumber = (num) => {
   const urduDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
-  return number.toString().replace(/\d/g, (digit) => urduDigits[digit]);
+  return num.toString().replace(/\d/g, (digit) => urduDigits[digit]);
 };
 
-export const formatCurrency = (amount) => {
-  return `Rs ${amount.toFixed(2)}`;
-};
+export const translateLabel = (key) => {
+  const translations = {
+    CATEGORIES: "اقسام",
+    SUBCATEGORIES: "ذیلی اقسام",
+    PRODUCTS: "مصنوعات",
+    POS: "پوائنٹ آف سیل",
+    BILLS: "بلز",
+    SYNC: "ہم آہنگی",
+    WEIGHT: "وزن",
+    QUANTITY: "تعداد",
+    PRICE: "قیمت",
+    TOTAL: "کل",
+    PRINT: "پرنٹ",
+    REMOVE: "حذف",
+    FINALIZE: "بل مکمل کریں",
+    OFFLINE: "آف لائن",
+    SYNC_NOW: "اب ہم آہنگ کریں",
+    LAST_SYNC: "آخری ہم آہنگی",
+  };
 
-export const formatDate = (date) => {
-  return new Date(date).toLocaleDateString("ur-PK", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  return translations[key] || key;
 };

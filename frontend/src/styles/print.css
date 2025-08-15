@@ -1,0 +1,156 @@
+@media print {
+  /* Reset all styles for printing */
+  * {
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    float: none !important;
+    position: static !important;
+    overflow: visible !important;
+  }
+
+  /* Hide everything except the bill */
+  body > *:not(.print-section) {
+    display: none !important;
+  }
+
+  /* Bill container styling */
+  .print-section {
+    display: block !important;
+    visibility: visible !important;
+    width: 100mm !important; /* Standard receipt width */
+    min-height: 100vh;
+    padding: 5mm !important;
+    margin: 0 auto !important;
+    font-family: "Noto Nastaliq Urdu", serif !important;
+    font-size: 16pt !important;
+    line-height: 1.5 !important;
+    color: #000 !important;
+    background: #fff !important;
+    direction: rtl !important;
+    text-align: right !important;
+  }
+
+  /* Bill header styling */
+  .print-header {
+    text-align: center !important;
+    margin-bottom: 8mm !important;
+    padding-bottom: 3mm !important;
+    border-bottom: 2px dashed #000 !important;
+  }
+
+  .print-header h1 {
+    font-size: 24pt !important;
+    font-weight: bold !important;
+    margin-bottom: 2mm !important;
+  }
+
+  .print-header p {
+    font-size: 14pt !important;
+  }
+
+  /* Bill table styling */
+  .print-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 5mm 0 !important;
+  }
+
+  .print-table th {
+    font-weight: bold !important;
+    padding: 2mm !important;
+    border-bottom: 1px solid #000 !important;
+  }
+
+  .print-table td {
+    padding: 2mm !important;
+    border-bottom: 1px dashed #ccc !important;
+  }
+
+  /* Item name column */
+  .print-table td:first-child {
+    width: 50% !important;
+  }
+
+  /* Quantity/weight column */
+  .print-table td:nth-child(2) {
+    width: 15% !important;
+    text-align: center !important;
+  }
+
+  /* Price column */
+  .print-table td:nth-child(3) {
+    width: 15% !important;
+    text-align: center !important;
+  }
+
+  /* Total column */
+  .print-table td:last-child {
+    width: 20% !important;
+    text-align: center !important;
+  }
+
+  /* Total amount styling */
+  .print-total {
+    text-align: left !important;
+    font-weight: bold !important;
+    font-size: 18pt !important;
+    margin-top: 5mm !important;
+    padding-top: 3mm !important;
+    border-top: 2px dashed #000 !important;
+  }
+
+  /* Footer styling */
+  .print-footer {
+    text-align: center !important;
+    margin-top: 10mm !important;
+    padding-top: 5mm !important;
+    border-top: 1px solid #000 !important;
+    font-size: 14pt !important;
+  }
+
+  /* Hide interactive elements */
+  button,
+  input,
+  select,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Page breaks */
+  .page-break {
+    page-break-before: always !important;
+    margin-top: 20mm !important;
+  }
+
+  /* Urdu-specific optimizations */
+  .urdu-text {
+    font-family: "Noto Nastaliq Urdu" !important;
+    font-size: 16pt !important;
+    line-height: 2 !important;
+    text-align: right !important;
+  }
+
+  /* Currency formatting */
+  .urdu-currency {
+    font-family: "Noto Nastaliq Urdu" !important;
+    letter-spacing: 0 !important;
+  }
+
+  /* Prevent elements from breaking across pages */
+  .print-table tr {
+    page-break-inside: avoid !important;
+  }
+
+  /* Watermark prevention */
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+/* Portrait mode for printing */
+@page {
+  size: auto; /* auto is the initial value */
+  margin: 0mm; /* this affects the margin in the printer settings */
+}

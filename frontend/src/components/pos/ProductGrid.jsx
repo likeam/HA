@@ -1,90 +1,85 @@
 import React, { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { addToCart } from "../../features/pos/posSlice";
-import SearchBar from "../common/SearchBar";
+import { useDispatch } from "react-redux";
+import { addItem } from "../features/posSlice";
+import { translateLabel } from "../utils/urduUtils";
 
-const ProductGrid = () => {
-  const dispatch = useAppDispatch();
-  const products = useAppSelector((state) => state.inventory.products);
-  const categories = useAppSelector((state) => state.inventory.categories);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+const ProductGrid = ({ products }) => {
+  const dispatch = useDispatch();
+  const [weightInput, setWeightInput] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch =
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.barcode?.includes(searchTerm);
-    const matchesCategory = selectedCategory
-      ? product.category === selectedCategory
-      : true;
-    return matchesSearch && matchesCategory;
-  });
+  const handleProductClick = (product) => {
+    if (product.byWeight) {
+      setSelectedProduct(product);
+      setWeightInput("");
+    } else {
+      dispatch(addItem({ product }));
+    }
+  };
 
-  const handleAddToCart = (product) => {
-    dispatch(
-      addToCart({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        stock: product.stock,
-      })
-    );
+  const handleWeightSubmit = () => {
+    if (selectedProduct && weightInput) {
+      const weight = parseFloat(weightInput);
+      if (!isNaN(weight) && weight > 0) {
+        dispatch(
+          addItem({
+            product: selectedProduct,
+            weight,
+          })
+        );
+        setSelectedProduct(null);
+      }
+    }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-        <div className="md:col-span-2">
-          <SearchBar
-            value={searchTerm}
-            onChange={setSearchTerm}
-            placeholder="مصنوعات تلاش کریں..."
-          />
-        </div>
-        <div>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full p-2 border rounded"
+    <div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        {products.map((product) => (
+          <button
+            key={product._id}
+            onClick={() => handleProductClick(product)}
+            className="bg-amber-50 hover:bg-amber-100 p-3 rounded-lg shadow border border-amber-200 transition-colors"
           >
-            <option value="">تمام زمرے</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-        {filteredProducts.map((product) => (
-          <div
-            key={product.id}
-            className="border rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => handleAddToCart(product)}
-          >
-            <div className="bg-gray-100 h-32 flex items-center justify-center">
-              <span className="text-gray-400">تصویر</span>
+            <div className="font-urdu text-lg">{product.urduName}</div>
+            <div className="text-gray-700 mt-1">
+              {product.price} روپے {product.byWeight ? "/کلو" : ""}
             </div>
-            <div className="p-2">
-              <h3 className="font-medium truncate">{product.name}</h3>
-              <div className="flex justify-between items-center mt-1">
-                <span className="text-green-600 font-bold">
-                  Rs {product.price.toFixed(2)}
-                </span>
-                <span className="text-sm text-gray-500">
-                  {product.stock} دستیاب
-                </span>
-              </div>
-            </div>
-          </div>
+          </button>
         ))}
       </div>
 
-      {filteredProducts.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          <p>کوئی مصنوعات نہیں ملی</p>
+      {selectedProduct && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="font-urdu text-xl mb-4">
+              {selectedProduct.urduName} کا وزن درج کریں (کلوگرام)
+            </h3>
+            <input
+              type="number"
+              value={weightInput}
+              onChange={(e) => setWeightInput(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded text-right text-lg"
+              placeholder="وزن درج کریں"
+              step="0.1"
+              min="0.1"
+              autoFocus
+            />
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={() => setSelectedProduct(null)}
+                className="px-4 py-2 bg-gray-300 rounded"
+              >
+                {translateLabel("CANCEL")}
+              </button>
+              <button
+                onClick={handleWeightSubmit}
+                className="px-4 py-2 bg-amber-600 text-white rounded"
+              >
+                {translateLabel("ADD")}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -1,0 +1,260 @@
+@import "tailwindcss";
+
+/* Urdu Font Setup */
+@font-face {
+  font-family: "Noto Nastaliq Urdu";
+  src: url("../assets/fonts/NotoNastaliqUrdu-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Base RTL Styles */
+body {
+  direction: rtl;
+  text-align: right;
+  background-color: #f8fafc;
+  font-family: "Noto Nastaliq Urdu", "Segoe UI", Tahoma, Geneva, Verdana,
+    sans-serif;
+  line-height: 1.8;
+}
+
+/* Urdu Text Styles */
+.font-urdu {
+  font-family: "Noto Nastaliq Urdu", serif;
+  font-size: 1.1rem;
+}
+
+/* RTL Form Elements */
+input,
+textarea,
+select,
+button {
+  font-family: "Noto Nastaliq Urdu", "Segoe UI", sans-serif;
+}
+
+input[type="number"] {
+  text-align: center;
+}
+
+/* RTL Layout Adjustments */
+.rtl-grid {
+  direction: rtl;
+}
+
+.rtl-flex {
+  direction: rtl;
+}
+
+/* Print Styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-section,
+  .print-section * {
+    visibility: visible;
+  }
+
+  .print-section {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 20px;
+    font-size: 22px;
+    background-color: white;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Custom Utility Classes */
+@layer components {
+  /* Buttons */
+  .btn-primary {
+    @apply bg-amber-600 hover:bg-amber-700 text-white py-2 px-4 rounded-lg font-urdu transition-colors;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg font-urdu transition-colors;
+  }
+
+  .btn-danger {
+    @apply bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg font-urdu transition-colors;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-lg shadow-lg overflow-hidden;
+  }
+
+  .card-header {
+    @apply bg-amber-700 text-white p-4 font-urdu text-xl;
+  }
+
+  .card-body {
+    @apply p-4;
+  }
+
+  /* Forms */
+  .form-input {
+    @apply w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-amber-500;
+  }
+
+  .form-label {
+    @apply block mb-2 font-urdu text-gray-700;
+  }
+
+  .form-select {
+    @apply w-full p-3 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-amber-500;
+  }
+
+  /* Tables */
+  .table-urdu {
+    @apply w-full text-right;
+  }
+
+  .table-urdu th {
+    @apply bg-gray-100 p-3 font-urdu;
+  }
+
+  .table-urdu td {
+    @apply p-3 border-b;
+  }
+
+  /* Inventory Items */
+  .inventory-item {
+    @apply bg-amber-50 p-4 rounded-lg shadow border border-amber-200 transition-transform hover:scale-[1.02];
+  }
+
+  .product-tile {
+    @apply bg-amber-50 hover:bg-amber-100 p-3 rounded-lg shadow border border-amber-200 transition-colors;
+  }
+
+  /* POS Specific */
+  .pos-container {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-6;
+  }
+
+  .product-grid {
+    @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3;
+  }
+
+  /* Offline Banner */
+  .offline-banner {
+    @apply bg-red-500 text-white py-2 px-4 text-center font-urdu;
+  }
+
+  /* Loading Spinner */
+  .spinner {
+    @apply inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-600;
+  }
+}
+
+/* Animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Custom RTL Overrides */
+.float-right {
+  float: left !important;
+}
+
+.float-left {
+  float: right !important;
+}
+
+.mr-2 {
+  margin-right: 0 !important;
+  margin-left: 0.5rem !important;
+}
+
+.ml-2 {
+  margin-left: 0 !important;
+  margin-right: 0.5rem !important;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d97706;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b45309;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .pos-container {
+    grid-template-columns: 1fr;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  body {
+    font-size: 14px;
+  }
+
+  .font-urdu {
+    font-size: 1rem;
+  }
+}
+
+/* Print Optimization */
+@media print {
+  body {
+    background-color: white;
+    font-size: 24px;
+    padding: 0;
+    margin: 0;
+  }
+
+  .print-section table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .print-section th,
+  .print-section td {
+    border: 1px solid #000;
+    padding: 8px;
+  }
+}

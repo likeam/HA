@@ -1,21 +1,17 @@
 import mongoose from "mongoose";
 
-const subcategorySchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
+const subcategorySchema = new mongoose.Schema(
+  {
+    urduName: { type: String, required: true },
+    englishName: String,
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
   },
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Category",
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { timestamps: true }
+);
 
 const Subcategory = mongoose.model("Subcategory", subcategorySchema);
 

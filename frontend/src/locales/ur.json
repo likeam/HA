@@ -1,0 +1,19 @@
+{
+  "POINT_OF_SALE": "پوائنٹ آف سیل",
+  "PRODUCTS": "مصنوعات",
+  "CURRENT_BILL": "موجودہ بل",
+  "ITEM_NAME": "نام",
+  "QUANTITY": "مقدار",
+  "PRICE": "فی یونٹ",
+  "TOTAL": "کل",
+  "ACTION": "عمل",
+  "REMOVE": "حذف کریں",
+  "TOTAL_AMOUNT": "کل رقم",
+  "FINALIZE_BILL": "بل مکمل کریں",
+  "PRINT_BILL": "بل پرنٹ کریں",
+  "CLOSE": "بند کریں",
+  "OFFLINE_MODE": "آف لائن موڈ",
+  "SYNC_PENDING": "معلق بلز کو ہم آہنگ کریں",
+  "SYNC_SUCCESS": "کامیابی سے ہم آہنگ ہو گیا",
+  "SYNC_FAILED": "ہم آہنگی میں ناکامی"
+}
